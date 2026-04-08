@@ -1,0 +1,162 @@
+from tkinter import*   #importibg tkinter
+from tkinter import colorchooser
+
+win = Tk()
+win.geometry("1100x600")                 # window 
+win.resizable(False,False)                
+
+
+
+
+#Frame 1 : Tools
+frame1 = Frame(win,height=100,width=1100)   #commond Frame creating                                 #button ,listbox,checkbox ,entery,label ,frame
+frame1.grid(row = 0,column=0,sticky= NW)
+
+
+
+
+#Tools Frame
+
+tframe = Frame(frame1,height =100 ,width=100,bg ="grey",relief= SUNKEN,borderwidth = 10)
+tframe.grid(row=0,column =0)
+
+def use_pencil():
+    stroke_colour.set("black")
+    
+def use_erasser():
+    stroke_colour.set("white")
+    can["cursor"] = DOTBOX
+
+pencil = Button(tframe,text="Pencil",width=10, command= use_pencil)
+pencil.grid(row =0,column= 0)
+
+eraser = Button(tframe,text="eraser",width=10, command= use_erasser )
+eraser.grid(row =1,column= 0)
+
+tlabel = Label(tframe,text ="Tools",width=10)
+tlabel.grid(row =2,column =0)
+
+
+
+
+
+#Size Frame
+
+
+dframe = Frame(frame1,height =100 ,width=100,relief= SUNKEN,borderwidth = 3)
+dframe.grid(row=0,column =1)
+
+defaultbutton = Button(dframe,text="default",width=10, command= use_pencil)
+defaultbutton.grid(row =0,column= 0)
+
+stroke_size = IntVar()
+
+
+options = [1,2,3,4,5,6,7,8,9,10]
+
+size_list =OptionMenu(dframe, stroke_size ,*options)
+size_list.grid(row =1,column=0)
+
+size_label = Label(dframe,text = "Size")
+size_label.grid(row =2, column =0)
+
+
+#clour box Frame
+
+def selectcolour ():
+    selected_colour = colorchooser.askcolor(title="Select Colour")
+    print(selected_colour)
+
+    if selected_colour[1] == None :
+        selected_colour.set("black")
+    else :
+        stroke_colour.set(selected_colour[1])
+
+
+colourbox =  Frame(frame1, width = 100,height= 100,bg = "grey")
+colourbox.grid(column = 3,row =0)
+
+colourbox_button = Button (colourbox, text = "Select Colour",width = 10,relief= SUNKEN,borderwidth = 3,command= selectcolour)
+colourbox_button.grid(row = 0,column =0)
+
+prevcolour_button = Button (colourbox, text = "Previous Color",width = 10,relief= SUNKEN,borderwidth = 3,command= selectcolour)
+prevcolour_button.grid(row = 1,column =0)
+
+prevcolour_button = Button (colourbox, text = "Select Colour",width = 10,relief= SUNKEN,borderwidth = 3,command= selectcolour)
+prevcolour_button.grid(row = 2,column =0)
+
+
+
+
+
+
+#colors Frame 
+
+colorsframe = Frame(frame1,height= 100,width = 100,bg = "grey")
+colorsframe.grid(row= 0,column= 4)
+
+green_button = Button(colorsframe,text= "Green",bg = "green",command=  lambda:stroke_colour.set("green"))
+green_button.grid(row=0,column =0)
+
+blue_button = Button(colorsframe,text= "blue",bg = "blue",command=  lambda:stroke_colour.set("blue"))
+blue_button.grid(row=1,column =0)
+
+red_button = Button(colorsframe,text= "Red",bg = "red",command=  lambda:stroke_colour.set("red"))
+red_button.grid(row=0,column =2)
+
+pink_button = Button(colorsframe,text= "pink",bg = "pink",command=  lambda:stroke_colour.set("pink"))
+pink_button.grid(row=1,column =2)
+
+yellow_button = Button(colorsframe,text= "yellow",bg = "yellow",command=  lambda:stroke_colour.set("yellow"))
+yellow_button.grid(row=0,column =3)
+
+brown_button = Button(colorsframe,text= "brown",bg = "brown",command=  lambda:stroke_colour.set("brown"))
+brown_button.grid(row=1,column =3)
+
+
+
+
+#Frame 2 : Canvas
+
+frame2 = Frame(win,height= 500,width=1100)  #canvas Frame Creating 
+frame2.grid(row = 1,column =0 )
+
+can = Canvas(frame2,height= 500 ,width = 1100,bg = "white", )  # Canvas 
+can.grid(row = 1,column =0 )
+
+stroke_colour = StringVar()
+stroke_colour.set("black")
+
+
+prevPoint =[0,0]                                                        #for making pencil we create two var prevpoint and current point defalt set 0,0 
+currPoint = [0,0]                                                       #then we create function with argument event then we make our 2 variable global to local 
+
+def paint(event):                                                       #another variable x,y for mouse cordinates then
+    print(event.type)                                                   #at mouse currrent location that point is set in current point variable 
+    global prevPoint
+    global currPoint                                                    #conditon i prevPoint is not equal to 0,0 then it will form a line  bet prevpoint and current point 
+    x = event.x                                                         #after making ;ine the value of current point is stored in prev point for next moveee
+    y = event.y
+    currPoint = [x,y]
+    if prevPoint != [0,0]:
+        can.create_polygon(prevPoint[0], prevPoint[1],currPoint[0],currPoint[1],fill= stroke_colour.get(),outline= stroke_colour.get() ,width= stroke_size.get() )
+     
+    prevPoint =currPoint
+
+    if event.type == "5":                                               #for stopping line production when button is relased we use buttonrelease bind  and when its value equal
+        prevPoint = [0,0]                                               #equal to 5 then automatically the prevpoint value is set to be 0,0 prevPoint = [0,0]   
+
+
+can.bind("<B1-Motion>",paint)
+can.bind("<ButtonRelease-1>",paint)
+
+
+
+
+
+
+
+
+
+
+win.mainloop()
